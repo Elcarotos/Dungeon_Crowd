@@ -14,7 +14,7 @@ Dungeon crowl est un mini-jeu développé en python avec le module pygame. Le jo
 * ``Monster_Gestion.py`` est, comme son nom l'indique, le programme qui s'occupe de la gestion des monstres. C'est à dire: leur couleur, leur fonctionnement ainsi que leurs projectiles, explosions et particules.
 
 ## Roadmap
-* Différentes updates visant à l'optimisation et à la réecriture partie "obscure" du code.
+* Différentes updates visant à l'optimisation et à la réecriture de partie "obscure" du code.
 * Updates des commentaires afin de simplifier la lecture voir l'amélioration du code.
 * Ajout de divers features princialement esthetiques (images et animatons, sons travaillés, etc)
 
