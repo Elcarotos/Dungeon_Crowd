@@ -81,11 +81,9 @@ def create_dummy_sound(frequency=440, duration=100, volume=0.1):
     return pygame.mixer.Sound(sound_array)
 
 SON_ATTAQUE = create_dummy_sound(880, 50)
-SON_DEGATS = create_dummy_sound(220, 75) # Gardé pour la référence, mais utilisé par Monster_Gestion
 SON_NIVEAU_SUP = create_dummy_sound(1000, 150)
 SON_POTION = create_dummy_sound(660, 100)
 SON_TOURBILLON = create_dummy_sound(700, 200)
-SON_PROJECTILE = create_dummy_sound(550, 30) # Gardé pour la référence, mais utilisé par Monster_Gestion
 
 # --- Classes du jeu ---
 
@@ -120,15 +118,6 @@ class Bouton:
 
         text_rect = text_surface.get_rect(center=self.rect.center)
         surface.blit(text_surface, text_rect)
-
-
-    def gerer_evenement(self, event):
-        # Cette méthode n'est plus appelée pour la souris dans la boucle principale
-        # Elle est conservée pour la compatibilité si l'on souhaite réactiver la souris
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self.rect.collidepoint(event.pos):
-                if self.action:
-                    self.action()
 
     def set_selected(self, state):
         self.is_selected = state
@@ -214,10 +203,10 @@ class Joueur(pygame.sprite.Sprite):
             "recharge_dash": 500, # Minimum 500ms
             "recharge_tourbillon": 1000 # Minimum 1000ms
         }
-        # Nouvelles stats pour les profils (ces informations sont persistantes)
+        # Stats pour les profils (ces informations sont persistantes)
         self.profile_name = "Nouveau Profil"
         self.highest_round = 0
-        self.total_play_time = 0 # en millisecondes
+        self.total_play_time = 0 # En millisecondes
 
 
     # Méthode pour exporter les données du joueur dans un dictionnaire
@@ -264,7 +253,6 @@ class Joueur(pygame.sprite.Sprite):
                 self.last_dash_particle_time = current_time
 
         else:
-            # MODIFICATION: Suppression des entrées clavier pour le mouvement
             if joystick_axes:
                 joystick_deadzone = 0.1
                 if abs(joystick_axes[0]) > joystick_deadzone:
@@ -284,8 +272,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.bottom = min(HAUTEUR, self.rect.bottom)
 
 
-    # MODIFICATION: direction_attaque_clavier est remplacé par direction_attaque_input
-    def attaquer(self, monstres_group_ref, direction_attaque_input): # Renommage pour éviter la confusion avec le groupe global
+    def attaquer(self, monstres_group_ref, direction_attaque_input): 
         temps_actuel = pygame.time.get_ticks()
         if temps_actuel - self.temps_derniere_attaque > self.delai_attaque:
             SON_ATTAQUE.play() # Jouer le son d'attaque
@@ -345,7 +332,6 @@ class Joueur(pygame.sprite.Sprite):
                     dx += joystick_axes[0]
                 if abs(joystick_axes[1]) > joystick_deadzone:
                     dy += joystick_axes[1]
-            # MODIFICATION: Suppression de la logique de dash au clavier
             else:
                 # Si aucune direction de joystick n'est fournie, dash vers le bas par défaut
                 dx, dy = 0, 1 
@@ -409,11 +395,7 @@ class Joueur(pygame.sprite.Sprite):
         self.level += 1
         self.xp -= self.xp_needed_for_level_up
         self.xp_needed_for_level_up = int(self.xp_base_needed * (1.5 ** (self.level - 1))) # Augmente l'XP nécessaire
-        # MODIFICATION: Supprimer les augmentations automatiques de stats ici
-        # self.pv_max += 20 # Augmente les PV max
         self.pv = self.pv_max # Soigne le joueur entièrement
-        # self.degats_attaque += 5 # Augmente les dégâts
-        # self.vitesse += 0.2 # Légère augmentation de vitesse
         self.skill_points += 1 # Gagne un point de compétence
         SON_NIVEAU_SUP.play() # Jouer le son de niveau supérieur
 
@@ -433,7 +415,6 @@ class Joueur(pygame.sprite.Sprite):
                 self.degats_attaque += self.upgrade_effects[stat_name]
             elif stat_name == "pv_max":
                 self.pv_max += self.upgrade_effects[stat_name]
-                # self.pv = self.pv_max # Soigne le joueur à fond après augmentation des PV max # Ligne commentée
             elif stat_name == "vitesse":
                 self.vitesse += self.upgrade_effects[stat_name]
             elif stat_name == "recharge_dash":
@@ -508,14 +489,11 @@ class Joueur(pygame.sprite.Sprite):
             
             rotated_epee_rect = rotated_epee.get_rect(center=epee_final_pos)
 
-            # Dessiner le glow de l'épée (diminué)
+            # Dessiner le glow de l'épée 
             # Réduit le nombre de couches et l'augmentation de taille
-            for i in range(1, 0, -1): # Seulement 1 couche pour un glow très subtil
+            for i in range(1, 0, -1): # Seulement 1 couche pour un glow léger
                 glow_surface = pygame.Surface(rotated_epee.get_size(), pygame.SRCALPHA)
                 glow_surface.blit(rotated_epee, (0,0))
-                
-                # Applique une teinte plus "glowy" et une légère transparence
-                # Utilise une transparence encore plus réduite pour un effet moins intense
                 glow_surface.fill(GLOW_ORANGE, special_flags=pygame.BLEND_RGBA_ADD)
                 
                 scaled_glow = pygame.transform.smoothscale(glow_surface, (rotated_epee.get_width() + i * 1, rotated_epee.get_height() + i * 1)) # Taille d'augmentation plus petite
@@ -549,7 +527,7 @@ class Joueur(pygame.sprite.Sprite):
             points.append((x_end, y_end))
             
             if len(points) > 2:
-                pygame.draw.polygon(surface, COULEUR_RECHARGE_PLEINE, points) # Use a brighter green for a glowing feel
+                pygame.draw.polygon(surface, COULEUR_RECHARGE_PLEINE, points) 
         else:
             pygame.draw.circle(surface, COULEUR_RECHARGE_PLEINE, (indicator_center_x, indicator_center_y), indicator_radius)
 
@@ -598,7 +576,6 @@ class PotionDeSoin(pygame.sprite.Sprite):
         time_remaining = POTION_DESPAWN_DURATION - time_elapsed
         
         if time_remaining <= 0:
-            # La génération de particules est déplacée vers la détection de collision dans la boucle de jeu
             self.kill()
         else:
             pourcentage_restant = time_remaining / POTION_DESPAWN_DURATION
@@ -624,7 +601,7 @@ joystick = None
 round_number = 1
 last_potion_spawn_time = 0
 running = True
-game_state = "MAIN_MENU" # MODIFICATION: Commence par le menu principal
+game_state = "MAIN_MENU" 
 player_death_time = 0
 PLAYER_DEATH_ANIMATION_DURATION = 1500 # Durée de l'animation de désintégration en ms
 
@@ -658,7 +635,7 @@ MENU_ENTRY_COOLDOWN_DURATION = 200 # 200 ms de délai
 
 # --- Gestion des profils de joueur ---
 PROFILES_FILE = "player_profiles.json"
-TEMP_PROFILES_FILE = "player_profiles.json.tmp" # Nouveau fichier temporaire
+TEMP_PROFILES_FILE = "player_profiles.json.tmp" 
 MAX_PROFILES = 3
 profiles = []
 current_profile_slot = -1 # Indique quel profil est actuellement chargé (-1 si aucun)
@@ -669,7 +646,7 @@ TEMP_SETTINGS_FILE = "settings.json.tmp"
 
 def load_profiles():
     global profiles
-    profiles = [] # Réinitialiser la liste avant le chargement
+    profiles = [] 
 
     # Liste des fichiers à tenter de charger, par ordre de préférence
     # Le fichier principal, puis le fichier temporaire (qui pourrait être une sauvegarde d'une écriture atomique échouée)
@@ -680,14 +657,12 @@ def load_profiles():
         if os.path.exists(filepath):
             try:
                 with open(filepath, 'r') as f:
-                    # Tenter de charger, si réussi, arrêter et traiter
                     data = json.load(f)
-                    # Validation basique de la structure des données chargées
                     if isinstance(data, list) and all(isinstance(p, dict) for p in data):
                         profiles = data
                         loaded_successfully = True
                         print(f"Profils chargés depuis {filepath}.")
-                        break # Chargé avec succès depuis ce fichier, arrêter d'essayer les autres
+                        break 
                     else:
                         print(f"Format de données inattendu dans {filepath}.")
             except json.JSONDecodeError:
@@ -697,21 +672,18 @@ def load_profiles():
         else:
             print(f"Fichier {filepath} non trouvé.")
 
-    # Après avoir tenté tous les fichiers, s'assurer que la liste des profils est correctement structurée
+    
     if not loaded_successfully:
         print("Aucun profil valide n'a pu être chargé. Création de profils par défaut.")
-        profiles = [] # S'assurer qu'elle est vide avant de peupler les valeurs par défaut
+        profiles = []
 
-    # Peupler avec des profils par défaut si moins de MAX_PROFILES
+    
     if len(profiles) < MAX_PROFILES:
         while len(profiles) < MAX_PROFILES:
-            # Ajouter une structure par défaut avec un nom de remplacement et des données None
             profiles.append({"name": f"Profil {len(profiles) + 1}", "data": None})
     elif len(profiles) > MAX_PROFILES:
-        # Tronquer si pour une raison quelconque plus de profils existent que MAX_PROFILES
         profiles = profiles[:MAX_PROFILES]
     
-    # S'assurer que toutes les entrées de profil ont les clés 'name' et 'data'
     for i in range(MAX_PROFILES):
         if not isinstance(profiles[i], dict):
             profiles[i] = {"name": f"Profil {i + 1}", "data": None}
@@ -720,7 +692,6 @@ def load_profiles():
         if "name" not in profiles[i]:
             profiles[i]["name"] = f"Profil {i + 1}"
 
-    # Nettoyer le fichier temporaire s'il existe toujours après un chargement réussi depuis le fichier principal
     if loaded_successfully and os.path.exists(TEMP_PROFILES_FILE):
         try:
             os.remove(TEMP_PROFILES_FILE)
@@ -731,21 +702,17 @@ def load_profiles():
 
 def save_profiles():
     try:
-        # Créer un chemin de fichier temporaire
         temp_dir = os.path.dirname(PROFILES_FILE)
-        # S'assurer que le répertoire existe
         if temp_dir and not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
 
         temp_filepath = os.path.join(temp_dir, os.path.basename(PROFILES_FILE) + ".tmp")
         
-        # Écrire dans un fichier temporaire
         with open(temp_filepath, 'w') as f:
             json.dump(profiles, f, indent=4)
             f.flush() # Force le tampon en mémoire à être écrit sur le disque
             os.fsync(f.fileno()) # S'assure que les données sont physiquement écrites sur le disque
         
-        # Vérifier que le fichier temporaire a été écrit correctement
         if not os.path.exists(temp_filepath) or os.path.getsize(temp_filepath) == 0:
             print(f"Erreur: Le fichier temporaire {temp_filepath} est vide ou n'a pas été créé correctement.")
             return # Ne pas procéder au remplacement si le fichier temporaire est défectueux
@@ -1798,7 +1765,6 @@ def game_loop():
                                 direction_attaque_joystick.y = 1
 
                             if direction_attaque_joystick.length() > 0:
-                                # Passe le groupe de monstres à la méthode attaquer du joueur
                                 joueur.attaquer(monstres, direction_attaque_joystick.normalize())
             
         if game_state == "PLAYING":
@@ -1808,7 +1774,6 @@ def game_loop():
             
             joueur.deplacement(joystick_axes_values)
 
-            # Mise à jour des monstres (gestion différenciée pour les statiques)
             for monstre in monstres:
                 if joueur.alive():
                     if isinstance(monstre, MonstreStatique):
@@ -1816,11 +1781,11 @@ def game_loop():
                     else:
                         if not round_start_cooldown_active:
                             monstre.mouvement(joueur.rect)
-                            monstre.attaquer(joueur) # Le monstre attaque le joueur
+                            monstre.attaquer(joueur) 
                 else:
-                    monstre.vitesse = 0 # Arrête le mouvement des monstres si le joueur est mort
+                    monstre.vitesse = 0 
 
-            tous_les_sprites.update() # Cette ligne met à jour tous les sprites qui n'ont pas de logique spécifique dans la boucle (comme Player, Particles, Projectiles)
+            tous_les_sprites.update() # Met à jour tous les sprites qui n'ont pas de logique spécifique dans la boucle (comme Player, Particles, Projectiles)
             potions_de_soin.update()
             particles.update()
             projectiles.update()
@@ -1840,7 +1805,6 @@ def game_loop():
                     angle = random.uniform(0, 2 * math.pi)
                     speed = random.uniform(1, 4)
                     velocity = (speed * math.cos(angle), speed * math.sin(angle) - random.uniform(0, 1))
-                    # Utilise la classe Particle importée
                     particle = Particle(potion.rect.centerx, potion.rect.centery, GLOW_VERT_PARTICULES, random.randint(2, 5), random.randint(300, 700), velocity)
                     tous_les_sprites.add(particle)
                     particles.add(particle)
@@ -1859,7 +1823,6 @@ def game_loop():
                     angle = random.uniform(0, 2 * math.pi)
                     speed = random.uniform(2, 8)
                     velocity = (speed * math.cos(angle), speed * math.sin(angle) - random.uniform(0, 2))
-                    # Utilise la classe Particle importée
                     particle = Particle(joueur.rect.centerx, joueur.rect.centery, GLOW_BLEU_PARTICULES, random.randint(3, 7), random.randint(500, 1500), velocity)
                     tous_les_sprites.add(particle)
                     particles.add(particle)
@@ -1868,7 +1831,6 @@ def game_loop():
             if not monstres and game_state == "PLAYING":
                 round_number += 1
                 nombre_nouveaux_monstres = random.randint(1 + round_number, 4 + round_number)
-                # Appel à la fonction creer_monstre du module Monster_Gestion
                 creer_monstre(nombre_nouveaux_monstres, joueur, tous_les_sprites, monstres, particles, projectiles, round_start_cooldown_active)
                 round_start_cooldown_active = True
                 round_start_cooldown_timer = pygame.time.get_ticks()
@@ -1881,7 +1843,7 @@ def game_loop():
                 menu_just_opened = True
                 deselect_all_buttons()
                 joystick_menu_active = True
-                menu_entry_cooldown_timer = pygame.time.get_ticks() # Start cooldown
+                menu_entry_cooldown_timer = pygame.time.get_ticks()
                 for monstre in monstres:
                     monstre.kill()
                 monstres.empty()
