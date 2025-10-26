@@ -13,6 +13,6 @@ The player embodies a small cubic knight fighting against endless hordes of mons
 * Array
 
 ## Fonctionnement
-* ``Dungeon_crowd.py`` est le corps principale du projet, c'est lui qui gère l'affichage avec pygame (menus, boutons, effets visuels, etc). Il s'occupe aussi du son et de sa gestion avec la fonction ``create_dummy_sound``, qui génére des sons en 16-bit. Il s'occupe aussi de la gestion du joueur en entier.
-* ``Monster_Gestion.py`` est, comme son nom l'indique, le programme qui s'occupe de la gestion des monstres. C'est à dire: leur couleur, leur fonctionnement ainsi que leurs projectiles, explosions et particules.
-* ``player_profiles.json`` et ``settings.json`` sont deux fichiers de sauvgardes crées automatiquement lors du lancement du jeu, il ne faut les supprimer sous aucun prétexte, cela entraine un reset des informations relative aux utilisateurs et des régalges.
+* ``Dungeon_crowd.py`` is the main body of the project, it manages the display with pygame (menus, buttons, visual effects, etc.). It also takes care of the sound and its management with the ``create_dummy_sound`` function, which generates 16-bit sounds. It also takes care of the management of the entire player.
+* ``Monster_Gestion.py`` is, as its name suggests, the program that handles monster management. That is to say: their color, their functioning as well as their projectiles, explosions and particles.
+* ``player_profiles.json`` and ``settings.json`` are two backup files that are automatically created when the game is launched. You should not delete them if you value your data because this will reset user information and settings.
