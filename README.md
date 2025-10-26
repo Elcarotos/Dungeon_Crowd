@@ -1,14 +1,14 @@
 # Dungeon_Crowd
 
 ## Description
-Dungeon_crowd est un mini-jeu développé en python avec le module pygame.  
+Dungeon_crowd is a mini-game develop in Python with the module PyGame.  
 
 ## Design/Gameplay
-Le joueur incarne un petit chevalier cubique se battant contre des hordes incessantes de monstres (eux aussi cubique). Le but est simple : Survivre, accumuler de l'expérience et devenir le plus puissant possible grâce au système de leveling intégré.
+The player embodies a small cubic knight fighting against endless hordes of monsters (also cubic). The goal is simple: Survive, accumulate experience and become as powerful as possible thanks to the integrated leveling system.
 
 ## Librairies 
 * Python 3.13.1
-* Pygame 2.6
+* PyGame 2.6
 * Json
 * Array
 
